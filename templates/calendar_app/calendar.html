@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Project Calendar - {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Project Calendar</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                View project deadlines and milestones on our interactive calendar.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Calendar -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6" data-aos="fade-up">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- Upcoming Deadlines -->
+                {% if upcoming_deadlines %}
+                <div class="bg-white rounded-lg shadow-lg p-6" data-aos="fade-up">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Upcoming Deadlines</h3>
+                    <div class="space-y-4">
+                        {% for deadline in upcoming_deadlines %}
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h4 class="font-semibold text-gray-800">{{ deadline.title }}</h4>
+                            <p class="text-sm text-gray-600">{{ deadline.client_name }}</p>
+                            <p class="text-sm text-gray-500">{{ deadline.deadline_date|date:"M d, Y" }}</p>
+                            <span class="inline-block bg-{{ deadline.priority }}-100 text-{{ deadline.priority }}-800 text-xs px-2 py-1 rounded-full mt-1">
+                                {{ deadline.get_priority_display }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Overdue Projects -->
+                {% if overdue_projects %}
+                <div class="bg-white rounded-lg shadow-lg p-6" data-aos="fade-up">
+                    <h3 class="text-xl font-bold mb-4 text-red-600">Overdue Projects</h3>
+                    <div class="space-y-4">
+                        {% for project in overdue_projects %}
+                        <div class="border-l-4 border-red-500 pl-4">
+                            <h4 class="font-semibold text-gray-800">{{ project.title }}</h4>
+                            <p class="text-sm text-gray-600">{{ project.client_name }}</p>
+                            <p class="text-sm text-red-600">Due: {{ project.deadline_date|date:"M d, Y" }}</p>
+                            <span class="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full mt-1">
+                                {{ project.days_until_deadline }} days overdue
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '{% url "calendar_app:calendar_events_api" %}',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventClick: function(info) {
+                const event = info.event;
+                const props = event.extendedProps;
+                
+                let content = '<h3 class="text-lg font-bold mb-2">' + event.title + '</h3>';
+                if (props.type === 'deadline') {
+                    content += '<p><strong>Client:</strong> ' + props.client + '</p>';
+                    content += '<p><strong>Status:</strong> ' + props.status + '</p>';
+                    content += '<p><strong>Priority:</strong> ' + props.priority + '</p>';
+                } else if (props.type === 'milestone') {
+                    content += '<p><strong>Project:</strong> ' + props.project + '</p>';
+                    content += '<p><strong>Completed:</strong> ' + (props.completed ? 'Yes' : 'No') + '</p>';
+                }
+                content += '<p><strong>Date:</strong> ' + event.start.toLocaleDateString() + '</p>';
+                
+                // You could implement a modal here or use a simple alert
+                alert(content.replace(/<[^>]*>/g, ''));
+            },
+            eventDisplay: 'block',
+            dayMaxEvents: 3
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

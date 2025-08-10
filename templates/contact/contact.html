@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Contact Us - {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Contact Us</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Get in touch with us to discuss your construction project. We're here to help bring your vision to life.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Contact Form -->
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-right">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+                <div id="contact-form-container">
+                    {% include 'contact/partials/contact_form.html' %}
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="space-y-8" data-aos="fade-left">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Get in Touch</h2>
+                    
+                    {% if contact_info %}
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Address</h3>
+                                <p class="text-gray-600">{{ contact_info.address|linebreaks }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-phone text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Phone</h3>
+                                <p class="text-gray-600">{{ contact_info.phone }}</p>
+                                {% if contact_info.emergency_phone %}
+                                <p class="text-gray-600">Emergency: {{ contact_info.emergency_phone }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-envelope text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Email</h3>
+                                <p class="text-gray-600">{{ contact_info.email }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-clock text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Business Hours</h3>
+                                <p class="text-gray-600">{{ contact_info.business_hours|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-gray-500">
+                        <p>Contact information will be displayed here once added through the admin panel.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
