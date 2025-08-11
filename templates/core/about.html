@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">About Us</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Learn more about our company, mission, and the team that makes it all possible.
+            </p>
+        </div>
+        
+        {% if company_info %}
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-12" data-aos="fade-up">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Our Story</h2>
+            <div class="prose max-w-none">
+                {{ company_info.about_us|safe }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
