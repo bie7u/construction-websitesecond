@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import CompanyInfo, Service, Testimonial, ProjectGallery
 from blog.models import BlogPost
@@ -40,3 +40,10 @@ def gallery(request):
         'projects': ProjectGallery.objects.all(),
     }
     return render(request, 'core/gallery.html', context)
+
+
+def gallery_detail(request, pk):
+    """Detail view for a single gallery item"""
+    gallery = get_object_or_404(ProjectGallery, pk=pk)
+    company_info = CompanyInfo.objects.first()
+    return render(request, 'core/gallery_detail.html', {'gallery': gallery, 'company_info': company_info})
